@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module lowload
+module LowLoad
   class FileProxy
     attr_reader :path, :scope
     attr_accessor :start_line, :end_line
