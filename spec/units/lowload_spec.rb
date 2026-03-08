@@ -1,0 +1,11 @@
+# frozen_string_literal: true
+
+require_relative '../../lib/lowload'
+
+RSpec.describe LowLoad do
+  describe '.load' do
+    it 'loads a file' do
+      LowLoad.load('../fixtures/mock_node.rbx')
+    end
+  end
+end
