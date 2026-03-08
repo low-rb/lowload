@@ -5,7 +5,7 @@ require_relative '../../lib/lowload'
 RSpec.describe LowLoad do
   describe '.load' do
     it 'loads a file' do
-      LowLoad.load('../fixtures/mock_node.rbx')
+      LowLoad.load('spec/fixtures/mock_node.rbx')
     end
   end
 end
