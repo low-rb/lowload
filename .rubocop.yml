@@ -22,6 +22,11 @@ Metrics/PerceivedComplexity:
 Metrics/CyclomaticComplexity:
   Max: 10
 
+# Support LowNode RBX syntax.
+AllCops:
+  Exclude:
+    - '**/*.rbx'
+
 # Support LowType return value "-> { T }" syntax.
 Style/TrailingBodyOnMethodDefinition:
   Enabled: false
