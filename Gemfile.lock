@@ -1,13 +1,13 @@
 PATH
   remote: ../lowkey
   specs:
-    lowkey (0.4.0)
+    lowkey (0.4.1)
       prism
 
 PATH
   remote: .
   specs:
-    lowload (0.1.0)
+    lowload (0.2.0)
       lowkey
 
 GEM

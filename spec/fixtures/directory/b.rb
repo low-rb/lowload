@@ -2,6 +2,8 @@
 
 autoload(:C, File.expand_path('spec/fixtures/directory/c.rb', Dir.pwd))
 
-module B
-  include C
+module Namespace
+  module B
+    include C
+  end
 end

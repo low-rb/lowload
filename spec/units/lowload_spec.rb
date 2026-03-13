@@ -3,9 +3,9 @@
 require_relative '../../lib/lowload'
 
 RSpec.describe LowLoad do
-  describe '.autoload' do
+  describe '.dirload' do
     it 'loads a directory' do
-      LowLoad.autoload('spec/fixtures/directory')
+      LowLoad.dirload('spec/fixtures/directory')
 
       expect(A).not_to be(nil)
       expect(B).not_to be(nil)
@@ -13,9 +13,9 @@ RSpec.describe LowLoad do
     end
   end
 
-  describe '.load' do
+  describe '.lowload' do
     it 'loads a file' do
-      LowLoad.load('spec/fixtures/mock_node.rbx')
+      LowLoad.lowload('spec/fixtures/mock_node.rbx')
       expect(MockNode).not_to be(nil)
     end
   end
