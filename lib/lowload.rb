@@ -2,7 +2,7 @@
 
 require 'lowkey'
 
-def lowload_binding
+def top_level_binding
   binding
 end
 
@@ -32,7 +32,7 @@ module LowLoad
       end
 
       # Not a security risk because "eval" is equivalent to "load" or "require_relative" in this context.
-      eval(file_proxy.export, lowload_binding, file_path, 0) # rubocop:disable Security/Eval
+      eval(file_proxy.export, top_level_binding, file_path, 0) # rubocop:disable Security/Eval
     end
   end
 end
