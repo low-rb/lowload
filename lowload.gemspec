@@ -8,7 +8,7 @@ Gem::Specification.new do |spec|
   spec.authors = ['maedi']
   spec.email = ['maediprichard@gmail.com']
 
-  spec.summary = 'An autoloader that is dumb but lets you be yourself'
+  spec.summary = 'An autoloader that is dumb but lets you do you'
   spec.description = 'LowLoad lets you use any module namespace convention and mix in manual require statements.'
   spec.homepage = 'https://github.com/low-rb/lowload'
   spec.required_ruby_version = '>= 3.3.0'
