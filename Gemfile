@@ -6,6 +6,7 @@ source 'https://rubygems.org'
 gemspec
 
 group :development do
+  gem 'antlers', path: '../antlers'
   gem 'lowkey', path: '../lowkey'
 
   gem 'pry'
