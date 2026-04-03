@@ -13,6 +13,22 @@ LowLoad is really dumb; like a bull in a china shop, smashing through fragile de
 - Mix in manual requires in autoloaded files
 - Supports RBX files
 
+## Usage
+
+### `lowload()`
+
+Load an `.rb` or `.rbx` file with:
+```ruby
+LowLoad.lowload('spec/fixtures/mock_node.rbx')
+```
+
+### `dirload()`
+
+Load an entire directory with:
+```ruby
+LowLoad.dirload(File.expand_path('app', __FILE__))
+```
+
 ## File Support
 
 LowLoad supports normal Ruby (`.rb`) files as well as a few other embedded formats.
@@ -30,14 +46,23 @@ end
 
 ℹ️ For more information see [LowNode](https://github.com/low-rb/low_node).
 
-### Antlers [UNRELEASED]
+### Antlers
 
-[Antlers](https://github.com/raindeer-rb/antlers) syntax such as `<{ ChildNode }>` can be embedded inside the `render` method of your RBX file.
+Antlers syntax can be embedded inside the `render` method of your RBX file:
+```ruby
+class MyClass
+  def render
+    <p><{ ChildNode }></p>
+  end
+end
+```
+
+ℹ️ For more information see [Antlers](https://github.com/raindeer-rb/antlers).
 
 ## Philosophy
 
 - Folders are often organised by the kind of file it is, a bunch of views for example. But namespaces should be organised by your domain — different to your file structure
-- You should be able to mix autoloading with manual `require` calls for stuff like gems, and `require_relative` when you need files outside the autoloaded directory
+- You should be able to mix autoloading with manual `require` and `require_relative` calls. You often need files outside the autoloaded directory
 
 ## Caveats
 
