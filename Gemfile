@@ -10,9 +10,7 @@ group :development do
 
   gem 'pry'
   gem 'pry-nav'
-  gem 'rack'
-  gem 'rack-test'
-  gem 'rake', '~> 13.0'
-  gem 'rspec', '~> 3.0'
+  gem 'rake'
+  gem 'rspec'
   gem 'rubocop', require: false
 end
