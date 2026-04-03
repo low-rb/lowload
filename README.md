@@ -19,7 +19,7 @@ LowLoad is really dumb; like a bull in a china shop, smashing through fragile de
 
 Load an `.rb` or `.rbx` file with:
 ```ruby
-LowLoad.lowload('spec/fixtures/mock_node.rbx')
+LowLoad.lowload('spec/fixtures/html_node.rbx')
 ```
 
 ### `dirload()`

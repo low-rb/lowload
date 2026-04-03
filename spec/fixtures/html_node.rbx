@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class MockNode
+class HTMLNode
   def render
     <p>Hello</p>
   end
