@@ -43,14 +43,40 @@ module LowLoad
     private
 
     def load_rbx(file_proxy:)
-      file_proxy.definitions.each_value do |class_proxy|
-        next unless class_proxy[:render]
-
-        class_proxy[:render].body.wrap(prefix: '%q{', suffix: '}')
-      end
+      render_templates = wrap_render_methods(file_proxy:)
 
       # Not a security risk because "eval" is equivalent to "load" or "require_relative" in this context.
       eval(file_proxy.export, top_level_binding, file_proxy.file_path, 0) # rubocop:disable Security/Eval
+
+      render_templates.each do |namespace, template|
+        const_get(namespace).class_eval do
+          # NOTE: Could support multiple root nodes (per method) in future here.
+          @render_root_node = Antlers.parse(template)
+          
+          def self.render_root_node
+            @render_root_node
+          end
+        end
+      end
+    end
+
+    def wrap_render_methods(file_proxy:)
+      render_templates = {}
+
+      file_proxy.definitions.each_value do |class_proxy|
+        render_method = class_proxy.respond_to?(:instance_methods) ? class_proxy.instance_methods[:render] : nil
+
+        next unless render_method
+
+        if defined?(Antlers) && ['{', '<{'].any? { |needle| render_method.body.export.include?(needle) }
+          render_templates[class_proxy.namespace] = render_method.body.export
+          render_method.body.lines = ['Antlers.render(self.class.render_root_node, caller_binding: binding, namespace: class_proxy.namespace)']
+        else
+          render_method.body.wrap(prefix: '%q{', suffix: '}')
+        end
+      end
+
+      render_templates
     end
   end
 end

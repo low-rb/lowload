@@ -2,6 +2,7 @@ PATH
   remote: ../antlers
   specs:
     antlers (0.1.0)
+      erb
       low_type (~> 1.0)
 
 PATH
@@ -22,6 +23,7 @@ GEM
     ast (2.4.3)
     coderay (1.1.3)
     diff-lcs (1.6.2)
+    erb (6.0.0)
     expressions (0.1.0)
     json (2.16.0)
     language_server-protocol (3.17.0.5)
