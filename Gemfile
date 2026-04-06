@@ -8,6 +8,7 @@ gemspec
 group :development do
   gem 'antlers', path: '../antlers'
   gem 'lowkey', path: '../lowkey'
+  gem 'low_node', path: '../lownode'
 
   gem 'pry'
   gem 'pry-nav'
