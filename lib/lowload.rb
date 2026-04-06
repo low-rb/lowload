@@ -36,28 +36,33 @@ module LowLoad
       when 'rb'
         load(file_path)
       when 'rbx'
-        load_rbx(file_proxy: Lowkey[file_path] || Lowkey.load(file_path))
+        load_rbx(file_path)
       end
     end
 
     private
 
-    def load_rbx(file_proxy:)
+    def load_rbx(file_path)
+      # 1. "File Load" phase.
+      file_proxy = Lowkey[file_path] || Lowkey.load(file_path)
       render_templates = wrap_render_methods(file_proxy:)
 
+      # 2. "Class Load" phase.
       # Not a security risk because "eval" is equivalent to "load" or "require_relative" in this context.
       eval(file_proxy.export, top_level_binding, file_proxy.file_path, 0) # rubocop:disable Security/Eval
 
+      # 3. "Runtime" phase (before low node instances are rendered).
       render_templates.each do |namespace, template|
-        const_get(namespace).class_eval do
-          # NOTE: Could support multiple root nodes (per method) in future here.
-          @render_root_node = Antlers.parse(template)
-          
-          def self.render_root_node
-            @render_root_node
-          end
-        end
+        klass = const_get(namespace)
+
+        next unless supports_templates?(klass)
+
+        klass.add_template(parser: Antlers, ast: Antlers.parse(template), template:, namespace:)
       end
+    end
+
+    def supports_templates?(klass)
+      klass.respond_to?(:render) && klass.respond_to?(:template) && klass.respond_to?(:add_template)
     end
 
     def wrap_render_methods(file_proxy:)
@@ -68,11 +73,14 @@ module LowLoad
 
         next unless render_method
 
-        # TODO: LowLoad and LowNode could work together and do more of a runtime "plugin" API to register an Antlers renderer for LowLoad's render method.
-        if defined?(Antlers) && ['{', '<{'].any? { |needle| render_method.body.export.include?(needle) }
-          render_templates[class_proxy.namespace] = render_method.body.export
-          render_method.body.lines = ["Antlers.render(self.class.render_root_node, caller_binding: binding, namespace: #{class_proxy.namespace})"]
-        else
+        render_method_body = render_method.body.export
+
+        if defined?(Antlers) && ['{', '<{'].any? { |needle| render_method_body.include?(needle) }
+          render_templates[class_proxy.namespace] = render_method_body
+        end
+
+        # TODO: Ignore code already wrapped in a string; write tests for HEREDOC, double quotes, single quotes, no quotes (RBX).
+        if render_method_body.strip.start_with?('<')
           render_method.body.wrap(prefix: '%q{', suffix: '}')
         end
       end
