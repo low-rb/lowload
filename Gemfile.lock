@@ -3,7 +3,7 @@ PATH
   specs:
     antlers (0.1.0)
       erb
-      low_type (~> 1.0)
+      low_event
 
 PATH
   remote: ../lowkey
@@ -28,15 +28,24 @@ GEM
     json (2.16.0)
     language_server-protocol (3.17.0.5)
     lint_roller (1.1.0)
-    low_type (1.1.12)
+    low_dependency (0.3.1)
+      expressions (~> 0.1)
+    low_event (0.3.0)
+      low_type (~> 1.0)
+      observers
+      protocol-http
+    low_type (1.1.13)
       expressions (~> 0.1)
       lowkey (~> 0.4)
     method_source (1.1.0)
+    observers (0.5.2)
+      low_dependency
     parallel (1.27.0)
     parser (3.3.10.0)
       ast (~> 2.4.1)
       racc
     prism (1.6.0)
+    protocol-http (0.60.0)
     pry (0.14.2)
       coderay (~> 1.1)
       method_source (~> 1.0)
