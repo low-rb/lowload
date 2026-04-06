@@ -15,7 +15,7 @@ RSpec.describe LowLoad do
 
   describe '.lowload' do
     it 'loads a file' do
-      LowLoad.lowload('spec/fixtures/html_node.rbx')
+      LowLoad.lowload('spec/fixtures/rbx/html_node.rbx')
       expect(HTMLNode).not_to be(nil)
     end
   end

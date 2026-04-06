@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 module LowLoad
-  class ParentNode
+  class AntlersNode
     def render
-      <p><{ ChildNode }></p>
+      <p>{"I'm a child"}</p>
     end
   end
 end

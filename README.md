@@ -50,7 +50,7 @@ end
 
 Antlers syntax can be embedded inside the `render` method of your RBX file:
 ```ruby
-class MyClass
+class ParentNode
   def render
     <p><{ ChildNode }></p>
   end

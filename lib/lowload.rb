@@ -68,9 +68,10 @@ module LowLoad
 
         next unless render_method
 
+        # TODO: LowLoad and LowNode could work together and do more of a runtime "plugin" API to register an Antlers renderer for LowLoad's render method.
         if defined?(Antlers) && ['{', '<{'].any? { |needle| render_method.body.export.include?(needle) }
           render_templates[class_proxy.namespace] = render_method.body.export
-          render_method.body.lines = ['Antlers.render(self.class.render_root_node, caller_binding: binding, namespace: class_proxy.namespace)']
+          render_method.body.lines = ["Antlers.render(self.class.render_root_node, caller_binding: binding, namespace: #{class_proxy.namespace})"]
         else
           render_method.body.wrap(prefix: '%q{', suffix: '}')
         end
