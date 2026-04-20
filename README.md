@@ -4,9 +4,11 @@
 
 LowLoad is really dumb; like a bull in a china shop, smashing through fragile dependencies to autoload your code without manual `load`/`require`/`require_relative` calls.
 
-1. First LowLoad goes through all your files and notes their constant definitions and file paths
-2. Then it goes through the same files again and creates autoloads for each file's dependencies
+1. First LowLoad goes through all your files and notes their constant definitions
+2. Then it goes through the same files again and creates autoloads for those dependencies
 3. Then it goes through every file again and loads it into Ruby
+
+This approach results in a very flexible autoloader with no conventions to follow, no internal dependency graph and very little configuration needed... just point it at a directory.
 
 **Features:**
 - Use any namespace structure you want (namespaces are not inferred from folder structure)
