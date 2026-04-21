@@ -1,20 +1,20 @@
 PATH
   remote: ../antlers
   specs:
-    antlers (0.1.0)
+    antlers (0.2.0)
       erb
       low_event
 
 PATH
   remote: ../lowkey
   specs:
-    lowkey (0.4.1)
+    lowkey (0.4.2)
       prism
 
 PATH
   remote: ../lownode
   specs:
-    low_node (0.1.2)
+    low_node (0.2.0)
       antlers
       low_event
       low_loop
