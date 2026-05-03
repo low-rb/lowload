@@ -17,18 +17,18 @@ This approach results in a very flexible autoloader with no conventions to follo
 
 ## Usage
 
-### `lowload()`
-
-Load an `.rb` or `.rbx` file with:
-```ruby
-LowLoad.lowload('spec/fixtures/html_node.rbx')
-```
-
 ### `dirload()`
 
 Load an entire directory with:
 ```ruby
 LowLoad.dirload(File.expand_path('app', __FILE__))
+```
+
+### `lowload()`
+
+Load an `.rb` or `.rbx` file with:
+```ruby
+LowLoad.lowload('spec/fixtures/html_node.rbx')
 ```
 
 ## File Support
