@@ -10,8 +10,7 @@ group :development do
   gem 'lowkey', path: '../lowkey'
   gem 'low_node', path: '../lownode'
 
-  gem 'pry'
-  gem 'pry-nav'
+  gem 'irb'
   gem 'rake'
   gem 'rspec'
   gem 'rubocop', require: false
