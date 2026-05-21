@@ -58,18 +58,18 @@ module LowLoad
       templates.each do |namespace, method_template|
         klass = const_get(namespace)
         method, template = method_template
-        # TODO: If params contain "**props" or similar then send that so that lownode can replicate it.
+        # TODO: If params contain "**props" or similar then send that, so that LowNode can replicate it.
         params = method.params.map(&:name)
 
         next unless supports_templates?(klass)
 
         # TODO: Make template engine configurable.
-        klass.load_template(template:, params:, engine: Antlers, namespace:)
+        klass.build_template(template:, params:, engine: Antlers, namespace:)
       end
     end
 
     def supports_templates?(klass)
-      klass.respond_to?(:render) && klass.respond_to?(:template) && klass.respond_to?(:load_template)
+      klass.respond_to?(:render) && klass.respond_to?(:template) && klass.respond_to?(:build_template)
     end
 
     def wrap_render_methods(file_proxy:)
