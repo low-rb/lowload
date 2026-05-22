@@ -8,7 +8,7 @@ gemspec
 group :development do
   gem 'antlers', path: '../antlers'
   gem 'lowkey', path: '../lowkey'
-  gem 'low_node', path: '../lownode'
+  gem 'low_node', path: '../low_node'
 
   gem 'irb'
   gem 'rake'
