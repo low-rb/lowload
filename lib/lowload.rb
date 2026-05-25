@@ -10,6 +10,8 @@ def top_level_binding
 end
 
 module LowLoad
+  class UnsupportedTemplate < StandardError; end
+
   class << self
     # Files are mapped, autoloaded, then loaded into Ruby in 3 separate stages.
     def dirload(path, pwd = Dir.pwd)
@@ -61,7 +63,7 @@ module LowLoad
         # TODO: If params contain "**props" or similar then send that, so that LowNode can replicate it.
         params = method.params.map(&:name)
 
-        next unless supports_templates?(klass)
+        next unless supports_templates?(klass) || raise UnsupportedTemplate, "Render template not supported by class"
 
         # TODO: Make template engine configurable.
         klass.build_template(template:, params:, engine: Antlers, namespace:)
