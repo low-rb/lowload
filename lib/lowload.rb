@@ -63,7 +63,7 @@ module LowLoad
         # TODO: If params contain "**props" or similar then send that, so that LowNode can replicate it.
         params = method.params.map(&:name)
 
-        next unless supports_templates?(klass) || raise UnsupportedTemplate, "Render template not supported by class"
+        next unless supports_templates?(klass) || raise(UnsupportedTemplate, "Template for '#{namespace}' identified but not implemented")
 
         # TODO: Make template engine configurable.
         klass.build_template(template:, params:, engine: Antlers, namespace:)
