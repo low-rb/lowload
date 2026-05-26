@@ -90,9 +90,7 @@ module LowLoad
         end
 
         # Intended to target HTML or Antlers tags. Use HEREDOC "<<~" in a plain Ruby (".rb") file, not RBX.
-        if render_method_body.strip.start_with?('<')
-          render_method.body.wrap(prefix: '%q{', suffix: '}')
-        end
+        render_method.body.wrap(prefix: '%q{', suffix: '}') if render_method_body.strip.start_with?('<')
       end
 
       templates

@@ -20,7 +20,7 @@ RSpec.describe 'Templates' do
     context 'with Antlers' do
       it 'creates template' do
         LowLoad.lowload('spec/fixtures/templates/antlers_node.rbx')
-        expect(AntlersNode.template).to have_attributes(template: %Q{    <p>{"I'm a child"}</p>\n})
+        expect(AntlersNode.template).to have_attributes(template: %(    <p>{"I'm a child"}</p>\n))
       end
     end
 
