@@ -16,7 +16,7 @@ module LowLoad
     # Files are mapped, autoloaded, then loaded into Ruby in 3 separate stages.
     def dirload(path, pwd = Dir.pwd)
       absolute_path = File.expand_path(path, pwd)
-      file_paths = Dir["#{absolute_path}/**/*"]
+      file_paths = Dir["#{absolute_path}/**/*"].filter { !File.directory?(it) }
 
       # Map all definitions and dependencies first.
       file_paths.each do |file_path|
