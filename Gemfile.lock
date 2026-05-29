@@ -1,7 +1,7 @@
 PATH
   remote: ../antlers
   specs:
-    antlers (0.3.0)
+    antlers (0.4.0)
       erb
       low_event
 
