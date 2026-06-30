@@ -16,9 +16,13 @@ module LowLoad
       absolute_path = File.expand_path(path, pwd)
       file_paths = Dir["#{absolute_path}/**/*"].filter { !File.directory?(it) }
 
-      step(:map_load, file_paths:)
-      step(:pre_load, file_paths:)
-      step(:low_load, file_paths:)
+      file_path_adapters = file_paths.each_with_object({}) do |file_path, hash|
+        hash[file_path] = find_adapter(file_path:)
+      end
+
+      step(:map_load, file_path_adapters:)
+      step(:pre_load, file_path_adapters:)
+      step(:low_load, file_path_adapters:)
     end
 
     def lowload(file_path)
@@ -31,9 +35,9 @@ module LowLoad
 
     private
 
-    def step(step, file_paths:)
-      file_paths.each do |file_path|
-        find_adapter(file_path:)&.send(step, file_path:)
+    def step(step, file_path_adapters:)
+      file_path_adapters.each do |file_path, adapter|
+        adapter&.send(step, file_path:)
       end
     end
 
