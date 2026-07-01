@@ -20,9 +20,9 @@ module LowLoad
         hash[file_path] = find_adapter(file_path:)
       end
 
-      step(:map_load, file_path_adapters:)
-      step(:pre_load, file_path_adapters:)
-      step(:low_load, file_path_adapters:)
+      step(:metadata, file_path_adapters:)
+      step(:preload, file_path_adapters:)
+      step(:evaluate, file_path_adapters:)
     end
 
     def lowload(file_path)
@@ -30,7 +30,7 @@ module LowLoad
 
       raise(UnsupportedFileType, "Could not load #{file_path}") if adapter.nil?
 
-      adapter.low_load(file_path:)
+      adapter.evaluate(file_path:)
     end
 
     private
