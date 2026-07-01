@@ -6,7 +6,7 @@ require_relative '../loader'
 
 module LowLoad
   class RubyAdapter < Adapter
-    def extensions = ['rb']
+    EXTENSIONS = ['rb']
 
     # Map all definitions and dependencies.
     def metadata(file_path:)

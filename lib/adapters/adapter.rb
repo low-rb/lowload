@@ -2,9 +2,8 @@
 
 module LowLoad
   class Adapter
-    def extensions
-      raise NotImplementedError, "Specify a file extension"
-    end
+    EXTENSIONS = []
+    def extensions = EXTENSIONS
 
     def metadata(file_path:)
     end

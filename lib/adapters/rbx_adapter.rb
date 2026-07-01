@@ -10,7 +10,7 @@ end
 
 module LowLoad
   class RBXAdapter < Adapter
-    def extensions = ['rbx']
+    EXTENSIONS = ['rbx']
 
     # Map all definitions and dependencies.
     def metadata(file_path:)
