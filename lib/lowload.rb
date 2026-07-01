@@ -1,99 +1,51 @@
 # frozen_string_literal: true
 
-require 'antlers'
-require 'lowkey'
-
+require_relative 'adapters/markdown_adapter'
+require_relative 'adapters/rbx_adapter'
+require_relative 'adapters/ruby_adapter'
 require_relative 'loader'
-
-def top_level_binding
-  binding
-end
+require_relative 'metadata'
 
 module LowLoad
+  class UnsupportedFileType < StandardError; end
   class UnsupportedTemplate < StandardError; end
 
   class << self
-    # Files are mapped, autoloaded, then loaded into Ruby in 3 separate stages.
+    ADAPTERS = [MarkdownAdapter.new, RBXAdapter.new, RubyAdapter.new]
+
     def dirload(path, pwd = Dir.pwd)
       absolute_path = File.expand_path(path, pwd)
       file_paths = Dir["#{absolute_path}/**/*"].filter { !File.directory?(it) }
 
-      # Map all definitions and dependencies first.
-      file_paths.each do |file_path|
-        Lowkey.load(file_path)
+      file_path_adapters = file_paths.each_with_object({}) do |file_path, hash|
+        hash[file_path] = find_adapter(file_path:)
       end
 
-      # Then autoload all dependencies for those files.
-      file_paths.each do |file_path| # rubocop:disable Style/CombinableLoops
-        Loader.add_autoloads(file_proxy: Lowkey[file_path])
-      end
+      metadata = Metadata.new
+      metadata.process(file_path_adapters:)
+      step(:preload, file_path_adapters:)
+      step(:evaluate, file_path_adapters:)
 
-      # Now we can load the files into Ruby.
-      file_paths.each do |file_path| # rubocop:disable Style/CombinableLoops
-        lowload(file_path)
-      end
+      metadata
     end
 
-    # Dependencies must first be loaded by dirload() or required by the file.
     def lowload(file_path)
-      case File.extname(file_path).delete_prefix('.')
-      when 'rb'
-        load(file_path)
-      when 'rbx'
-        load_rbx(file_path)
+      adapter = find_adapter(file_path:)
+
+      raise(UnsupportedFileType, "Could not load #{file_path}") if adapter.nil?
+
+      adapter.evaluate(file_path:)
+    end
+
+    def step(step, file_path_adapters:)
+      file_path_adapters.each do |file_path, adapter|
+        adapter&.send(step, file_path:)
       end
     end
 
-    private
-
-    def load_rbx(file_path)
-      # 1. "File Load" phase.
-      file_proxy = Lowkey[file_path] || Lowkey.load(file_path)
-      templates = wrap_render_methods(file_proxy:)
-
-      # 2. "Class Load" phase.
-      # Not a security risk because "eval" is equivalent to "load" or "require_relative" in this context.
-      eval(file_proxy.export, top_level_binding, file_proxy.file_path, 0) # rubocop:disable Security/Eval
-
-      # 3. "Runtime" phase (before LowNode instances are rendered).
-      # Templates only exist if antlers gem has been required by another gem (such as LowNode) and the template contains antlers syntax.
-      templates.each do |namespace, method_template|
-        klass = const_get(namespace)
-        method, template = method_template
-        # TODO: If params contain "**props" or similar then send that, so that LowNode can replicate it.
-        params = method.params.map(&:name)
-
-        next unless supports_templates?(klass) || raise(UnsupportedTemplate, "Template for '#{namespace}' identified but not implemented")
-
-        # TODO: Make template engine configurable.
-        klass.build_template(template:, params:, engine: Antlers, namespace:)
-      end
-    end
-
-    def supports_templates?(klass)
-      klass.respond_to?(:render) && klass.respond_to?(:template) && klass.respond_to?(:build_template)
-    end
-
-    def wrap_render_methods(file_proxy:)
-      # GOAL: Templates could be organised by method and template rendering engine.
-      templates = {}
-
-      file_proxy.definitions.each_value do |class_proxy|
-        render_method = class_proxy.respond_to?(:instance_methods) ? class_proxy.instance_methods[:render] : nil
-
-        next unless render_method
-
-        render_method_body = render_method.body.export
-
-        if defined?(Antlers) && ['{', '<{'].any? { |needle| render_method_body.include?(needle) }
-          templates[class_proxy.namespace] = [render_method, render_method_body]
-        end
-
-        # Intended to target HTML or Antlers tags. Use HEREDOC "<<~" in a plain Ruby (".rb") file, not RBX.
-        render_method.body.wrap(prefix: '%q{', suffix: '}') if render_method_body.strip.start_with?('<')
-      end
-
-      templates
+    def find_adapter(file_path:)
+      extension = File.extname(file_path).delete_prefix('.')
+      ADAPTERS.find { |adapter| adapter.class::EXTENSIONS.include?(extension) }
     end
   end
 end
