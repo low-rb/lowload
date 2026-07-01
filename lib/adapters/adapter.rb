@@ -3,7 +3,6 @@
 module LowLoad
   class Adapter
     EXTENSIONS = []
-    def extensions = EXTENSIONS
 
     def metadata(file_path:)
     end

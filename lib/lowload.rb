@@ -1,17 +1,18 @@
 # frozen_string_literal: true
 
-require_relative 'adapters/ruby_adapter'
+require_relative 'adapters/markdown_adapter'
 require_relative 'adapters/rbx_adapter'
+require_relative 'adapters/ruby_adapter'
 require_relative 'loader'
+require_relative 'metadata'
 
 module LowLoad
   class UnsupportedFileType < StandardError; end
   class UnsupportedTemplate < StandardError; end
 
   class << self
-    ADAPTERS = [RubyAdapter.new, RBXAdapter.new]
+    ADAPTERS = [MarkdownAdapter.new, RBXAdapter.new, RubyAdapter.new]
 
-    # Files are mapped, preloaded, then loaded into Ruby in 3 distinct stages.
     def dirload(path, pwd = Dir.pwd)
       absolute_path = File.expand_path(path, pwd)
       file_paths = Dir["#{absolute_path}/**/*"].filter { !File.directory?(it) }
@@ -20,9 +21,12 @@ module LowLoad
         hash[file_path] = find_adapter(file_path:)
       end
 
-      step(:metadata, file_path_adapters:)
+      metadata = Metadata.new
+      metadata.process(file_path_adapters:)
       step(:preload, file_path_adapters:)
       step(:evaluate, file_path_adapters:)
+
+      metadata
     end
 
     def lowload(file_path)
@@ -33,8 +37,6 @@ module LowLoad
       adapter.evaluate(file_path:)
     end
 
-    private
-
     def step(step, file_path_adapters:)
       file_path_adapters.each do |file_path, adapter|
         adapter&.send(step, file_path:)
@@ -43,7 +45,7 @@ module LowLoad
 
     def find_adapter(file_path:)
       extension = File.extname(file_path).delete_prefix('.')
-      ADAPTERS.find { |adapter| adapter.extensions.include?(extension) }
+      ADAPTERS.find { |adapter| adapter.class::EXTENSIONS.include?(extension) }
     end
   end
 end

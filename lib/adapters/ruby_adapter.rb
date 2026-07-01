@@ -11,6 +11,8 @@ module LowLoad
     # Map all definitions and dependencies.
     def metadata(file_path:)
       Lowkey.load(file_path)
+
+      { file_path: }
     end
 
     # Then autoload all dependencies for those files.
