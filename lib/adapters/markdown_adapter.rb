@@ -23,5 +23,21 @@ module LowLoad
 
       YAML.safe_load(yaml_lines.join, symbolize_names: true)
     end
+
+    def url_path(file_path:)
+      # Remove "_number-" and segments beginning with "_".
+      url_path = file_path.split('/').map do |segment|
+        next segment.sub(/^_\d\W/, '') if segment.sub(/^_\d\W/, '') != segment
+        next nil if segment.sub(/^_/, '') != segment
+
+        segment
+      end.compact.join('/')
+      
+      EXTENSIONS.each do |extension|
+        url_path.delete_suffix!(".#{extension}")
+      end
+
+      url_path
+    end
   end
 end

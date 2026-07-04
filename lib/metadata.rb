@@ -10,41 +10,35 @@ module LowLoad
       *::LowLoad::RubyAdapter::EXTENSIONS,
     ]
 
-    attr_accessor :file_paths, :file_types, :tags
+    attr_accessor :loaded_paths, :missed_paths, :file_types, :url_paths, :tags
 
     def initialize
-      @file_paths = []
+      @loaded_paths = []
+      @missed_paths = []
 
-      @file_types = EXTENSIONS.each_with_object({}) do |extension, hash|
-        hash[extension] = []
-      end
-
+      @file_types = EXTENSIONS.each_with_object({}) { |extension, hash| hash[extension] = [] }
+      @url_paths = {}
       @tags = {}
     end
-    
+
     def process(file_path_adapters:)
       file_path_adapters.each do |file_path, adapter|
         if (metadata = adapter&.metadata(file_path:))
-          metadata.merge!({
-            file_path:,
-            file_type: File.extname(file_path).delete_prefix('.'),
-            file_loaded: true,
-          })
+          append(file_path:, adapter:, metadata:)
         else
-          metadata = { file_loaded: false }
+          @missed_paths << file_path
         end
-
-        append(metadata:)
       end
     end
 
-    def append(metadata:)
-      @file_paths << metadata[:file_path]
-      @file_types[metadata[:file_type]] = metadata[:file_path]
+    def append(file_path:, adapter:, metadata:)
+      @loaded_paths << file_path
+      @file_types[File.extname(file_path).delete_prefix('.')] = file_path
+      @url_paths[adapter.url_path(file_path:)] = file_path
 
       metadata[:tags]&.each do |tag|
         @tags[tag] ||= []
-        @tags[tag] = metadata[:file_path]
+        @tags[tag] = file_path
       end
     end
   end
